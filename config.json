@@ -1,0 +1,24 @@
+{
+    "Local_model": [
+        {
+        "model_id": "model1",
+        "endpoint": "http://127.0.0.1:11434/api/generate",
+        "model_name": "qwen3:1.7b",
+        "max_tokens":4096
+        },
+        {
+        "model_id": "model2",
+        "endpoint": "http://127.0.0.1:11434/api/generate",
+        "model_name": "qwen2-math:1.5b",
+        "max_tokens":4096
+        },
+        {
+        "model_id": "model3",
+        "endpoint": "http://127.0.0.1:11434/api/generate",
+        "model_name": "qwen2-math:7b",
+        "max_tokens":4096
+        }
+        
+    ]
+}
+
