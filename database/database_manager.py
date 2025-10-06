@@ -8,6 +8,8 @@ class Database_Manager:
         self.data_dir = Path(__file__).resolve().parents[1] / data_dir
         self.books_file = self.data_dir / "books.json"
         self.orders_file = self.data_dir / "orders.json"
+        self.data_dir.mkdir(parents=True, exist_ok=True)
+
         self._lock = Lock()
 
     def load_books(self) -> list[Book]:

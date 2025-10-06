@@ -1,4 +1,4 @@
-
+from pathlib import Path
 from abc import ABC, abstractmethod
 from typing import List
 import json
@@ -24,9 +24,11 @@ class LocalHTTPModel(ModelInterface):
         with open("core/prompt_react.txt", "r", encoding="utf-8") as f:
             react_prompt = f.read().strip()
         # Ghép react prompt vào đầu prompt
-        full_prompt = react_prompt + "\n" + prompt
+        full_prompt = react_prompt + "\n"
         if context:
-            full_prompt = "\n".join(str(c) for c in context) + "\n"
+            full_prompt += "\n".join(str(c) for c in context) + "\n"
+        full_prompt += prompt
+
 
         payload = {
             "model": self.model_name,
@@ -63,12 +65,14 @@ class SimpleEchoModel(ModelInterface):
 
 class ModelFactory:
     @staticmethod
-    def create(model_id: str, config: dict):
+    def create(model_id: str, config_path = Path(__file__).resolve().parents[1] /"config.json"):
+        with open(config_path, "r", encoding="utf-8") as f:
+            config = json.load(f)
         # Look up model in config using model_id from either API_model or Local_model
         local_models = {m.get("model_id"): m for m in config.get("Local_model", [])}
 
         if model_id in local_models:
-            cfg = local_models[model_id]
+            cfg = local_models.get(model_id)
             # if local config contains endpoint -> LocalHTTPModel else echo
             if cfg.get("endpoint"):
                 return LocalHTTPModel(cfg)
@@ -78,21 +82,8 @@ class ModelFactory:
         return SimpleEchoModel({})
 
 if __name__ == "__main__":
-    # Test LocalHTTPModel
-    config = {
-        "Local_model": [
-            {
-                "model_id": "model1",
-                "endpoint": "http://127.0.0.1:11434/api/generate",
-                "model_name": "qwen3:1.7b",
-                "max_tokens": 4096
-            },
-            {
-                "model_id": "echo",
-            }
-        ]
-    }
-    model = ModelFactory.create("model1", config)
-    print(model.generate_reply("Tôi muốn mua 2 quyển Học sâu cho người mới.", []))
+    model = ModelFactory.create("model1")
+    print(model.generate_reply("Tôi muốn thông tin về cuốn học sâu cho người mới", []))
+
     
 
