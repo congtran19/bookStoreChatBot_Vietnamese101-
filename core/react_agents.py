@@ -6,7 +6,7 @@ class ReActAgent:
     def __init__(self, model, tools: Dict[str, any]):
         self.model = model
         self.tools = tools
-        self.max_steps = 10
+        self.max_steps = 5
 
     def _extract_block(self, text: str, label: str) -> str:
         """Trích riêng nội dung giữa LABEL và block tiếp theo"""
@@ -45,59 +45,39 @@ class ReActAgent:
         }
 
     def run(self, prompt: str) -> str:
-        """Thực hiện nhiều vòng ReAct (sửa: đưa OBSERVATION vào context để model thấy)"""
-        context = []              # lịch sử reasoning: chứa response/OBSERVATION từng bước
-        user_prompt = prompt      # chỉ dùng prompt lần đầu; các vòng sau để "" để tránh lặp
-        last_response = ""
+        """Thực hiện nhiều vòng ReAct"""
+        context = []  # lưu toàn bộ lịch sử reasoning
+        query = prompt
 
         for step in range(self.max_steps):
-            # gọi model với context hiện tại
-            response = self.model.generate_reply(prompt=user_prompt, context=context)
-            last_response = response
-
-            # debug-friendly prints (bỏ nếu không cần)
-            print("MODEL RESPONSE:\n", response)
-
+            # Gọi model sinh reasoning
+            response = self.model.generate_reply(prompt=query, context=context)
             parsed = self._parse_response(response)
+            context.append(response)
 
-            # nếu model đã cho FINAL ANSWER -> kết thúc sớm
-            if parsed.get("TRẢ LỜI"):
-                return parsed["TRẢ LỜI"]
-
-            action = parsed.get("HÀNH ĐỘNG") or {}
+            action = parsed["HÀNH ĐỘNG"]
             if action:
                 tool_name = action.get("tool")
                 tool_input = action.get("input", {})
 
-                # gọi tool
                 if tool_name in self.tools:
                     try:
                         result = self.tools[tool_name].run(tool_input)
-                        
-                        response = self.model.generate_reply(prompt=user_prompt, context=context)
+                        observation = json.dumps(result, ensure_ascii=False)
                     except Exception as e:
-                        observation = f"⚠️ Lỗi khi gọi tool {tool_name}: {e}"
+                        observation = f"Lỗi khi gọi tool {tool_name}: {e}"
                 else:
                     observation = f"⚠️ Công cụ {tool_name} không được hỗ trợ."
 
-                # **RẤT QUAN TRỌNG**: lưu response và observation vào context
-                # để lần gọi model tiếp theo nó thấy cả 2 (thứ tự: response, OBSERVATION)
-                context.append(response)
-                context.append(f"OBSERVATION: {observation}")
-
-                # sau lần gọi đầu, bỏ prompt gốc (đã nằm trong context)
-                user_prompt = ""
-                # tiếp tục vòng để model có thể ra ACTION tiếp theo hoặc FINAL
-                continue
+                # Cập nhật prompt cho bước tiếp theo
+                query = f"{response}\nOBSERVATION: {observation}"
             else:
-                # Không có hành động — thêm response vào context rồi dừng
-                context.append(response)
                 break
 
-    # nếu hết vòng mà chưa có FINAL, cố lấy từ last_response hoặc trả last_response
-        parsed = self._parse_response(last_response)
-        return response #parsed.get("TRẢ LỜI", last_response)
+            if parsed["TRẢ LỜI"]:
+                return parsed["TRẢ LỜI"]
 
+        return parsed.get("TRẢ LỜI", "Không có câu trả lời cuối.")
 
 if __name__ == "__main__":
     from model_factory import ModelFactory

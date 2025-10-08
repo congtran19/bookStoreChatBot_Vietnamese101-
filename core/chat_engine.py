@@ -55,7 +55,7 @@ if __name__ == "__main__":
         "OrderBookTool": OrderBookTool(db)
     })
     ChatEngine = ChatEngine(agents)
-    while True:
+    while True: 
         user_input = input("Bạn: ")
         if user_input.lower() in ["exit", "quit"]:
             break
