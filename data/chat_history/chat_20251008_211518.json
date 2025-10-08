@@ -1,0 +1,26 @@
+[
+  {
+    "role": "user",
+    "content": "tôi muốn mua 2 cuốn toán cao cấp"
+  },
+  {
+    "role": "assistant",
+    "content": "Vui lòng cung cấp tên, số điện thoại và địa chỉ của bạn để tôi tạo đơn hàng nhé!"
+  },
+  {
+    "role": "user",
+    "content": "tên tôi là Công trần, số điện thoại : 2525532, đia chỉ: 24 Hà Nội"
+  },
+  {
+    "role": "assistant",
+    "content": "Đơn hàng đã được tạo thành công! Mã đơn: 8, khách Công Trần mua 2 cuốn “Toán cao cấp”. Trạng thái: pending. Ngày tạo: 2025-10-10."
+  },
+  {
+    "role": "user",
+    "content": "đặt hàng cho tôi"
+  },
+  {
+    "role": "assistant",
+    "content": "Đơn hàng đã được tạo thành công! Mã đơn: 8, khách Công Trần mua 2 cuốn “Toán cao cấp”. Trạng thái: pending. Ngày tạo: 2025-10-10."
+  }
+]

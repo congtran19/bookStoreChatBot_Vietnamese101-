@@ -21,40 +21,41 @@ class LocalHTTPModel(ModelInterface):
         if not self.endpoint:
             return f"LocalModel-Echo: {prompt}"
         
-        with open("core/prompt_react.txt", "r", encoding="utf-8") as f:
+        # Luôn xác định đường dẫn tuyệt đối tới prompt_react.txt
+        prompt_path = Path(__file__).resolve().parent / "prompt_react.txt"
+        with open(prompt_path, "r", encoding="utf-8") as f:
             react_prompt = f.read().strip()
-        # Ghép react prompt vào đầu prompt
-        full_prompt = react_prompt + "\n"
-        if context:
-            full_prompt += "\n".join(str(c) for c in context) + "\n"
-        full_prompt += prompt
 
+        # Ghép prompt ReAct
+        full_prompt = react_prompt + "\n\n"
+        if context:
+            full_prompt += "\n---\n".join(context) + "\n---\n"
+        full_prompt += prompt
 
         payload = {
             "model": self.model_name,
             "prompt": full_prompt,
             "stream": False
         }
+
         try:
-            r = requests.post(self.endpoint, json=payload, headers=self.headers, timeout=30)
+            r = requests.post(self.endpoint, json=payload, headers=self.headers, timeout=50)
             r.raise_for_status()
-            j = json.loads(r.text)
+            j = r.json()
 
-            # Ollama trả về {"model": "...", "created_at": "...", "response": "...", ...}
-            if isinstance(j, dict) and "response" in j:
-                return str(j["response"]).strip()
-
-            # Các dạng khác
-            if "reply" in j:
-                return str(j["reply"])
+            if "response" in j:
+                return j["response"].strip()
             if "text" in j:
-                return str(j["text"])
-            if "choices" in j and isinstance(j["choices"], list) and j["choices"]:
-                return str(j["choices"][0].get("text") or j["choices"][0].get("message", {}).get("content", ""))
+                return j["text"].strip()
+            if "reply" in j:
+                return j["reply"].strip()
+            if "choices" in j and j["choices"]:
+                return str(j["choices"][0].get("text") or j["choices"][0].get("message", {}).get("content", "")).strip()
 
             return str(j)
         except Exception as e:
             return f"[Local model call failed: {e}]"
+
 
 
 class SimpleEchoModel(ModelInterface):
@@ -83,7 +84,12 @@ class ModelFactory:
 
 if __name__ == "__main__":
     model = ModelFactory.create("model1")
-    print(model.generate_reply("Tôi muốn thông tin về cuốn học sâu cho người mới", []))
+    while True:
+        user_input = input("Bạn: ")
+        if user_input.lower() in ["exit", "quit"]:
+            break
+        response = model.generate_reply(user_input, [])
+        print("Trợ lý:", response)
 
     
 

@@ -37,59 +37,77 @@ class SearchBookTool:
         return results
 
 
+from datetime import datetime
+from database.models import Order
+
 class OrderBookTool:
+    """
+    Tool: Đặt hàng sách
+    input: {
+        "customer_name": str,
+        "phone": str,
+        "address": str,
+        "books": [{"book_id": int, "quantity": int}]
+    }
+    """
     def __init__(self, db):
         self.db = db
-
-    def run(self, query: dict):
-        title = query.get("title", "").lower()
-        quantity = int(query.get("quantity", 1))
-        customer = query.get("name", "Khách")
-        address = query.get("address", "")
-        phone = query.get("phone", "")
-
-        books = self.db.load_books()
-        found = None
-        for b in books:
-            if title in b.title.lower():
-                found = b
-                break
-
-        if not found:
-            return {"error": "❌ Không tìm thấy sách cần đặt."}
-        if found.stock < quantity:
-            return {"error": f"❌ Sách '{found.title}' chỉ còn {found.stock} quyển trong kho."}
-
-        # Giảm tồn kho
-        found.stock -= quantity
-        self.db.save_books(books)
-
-        # Tạo đơn hàng
-        order = Order(
-            customer_name=customer,
-            phone=phone,
-            address=address,
-            books=[{"book_id": found.book_id, "quantity": quantity}],
-            status="pending",
-            created_at=datetime.utcnow().isoformat()
+        self.name = "OrderBookTool"
+        self.description = (
+            "Tạo đơn hàng mới với thông tin khách hàng và danh sách sách muốn mua."
         )
 
-        order_id = self.db.add_order(order)
-        return {
-            "order_id": order_id,
-            "book_title": found.title,
-            "quantity": quantity,
-            "price_total": quantity * found.price,
-            "message": f"✅ Đã tạo đơn hàng #{order_id} cho {quantity} quyển '{found.title}'"
-        }
+    def run(self, query: dict):
+        try:
+            # Kiểm tra input hợp lệ
+            if not isinstance(query, dict):
+                return {"error": "Input phải là dictionary"}
 
+            customer_name = query.get("customer_name", "").strip()
+            phone = query.get("phone", "").strip()
+            address = query.get("address", "").strip()
+            books = query.get("books", [])
+
+            if not customer_name or not phone or not address:
+                return {"error": "Thiếu thông tin khách hàng"}
+            if not isinstance(books, list) or not books:
+                return {"error": "Danh sách sách không hợp lệ"}
+
+            # ✅ Chuyển từ dict → Order object
+            order = Order(
+                customer_name=customer_name,
+                phone=phone,
+                address=address,
+                books=books,
+                status="pending",
+                created_at=datetime.utcnow().isoformat()
+            )
+
+            # ✅ Ghi đơn hàng vào file
+            order_id = self.db.add_order(order)
+
+            return {
+                "success": True,
+                "message": f"✅ Đơn hàng #{order_id} đã được tạo thành công.",
+                "order_id": order_id,
+                "customer": customer_name,
+                "books": books
+            }
+
+        except Exception as e:
+            return {"error": f"Lỗi khi tạo đơn hàng: {e}"}
 
 if __name__ == "__main__":
-    
     from database.database_manager import Database_Manager
     db = Database_Manager()
-    search_tool = SearchBookTool(db)
-    order_tool = OrderBookTool(db)
+    tool = OrderBookTool(db)
+    
+    result = tool.run({
+        "customer_name": "Nguyễn Văn A",
+        "phone": "0123456789",
+        "address": "123 Đường ABC",
+        "books": [{"book_id": 1, "quantity": 2}]
+    })
+    
+    print(result)
 
-    # Test SearchBookTool
-    print(search_tool.run({"title": "Toán cao cấp"}))

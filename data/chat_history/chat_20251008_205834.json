@@ -1,0 +1,10 @@
+[
+  {
+    "role": "user",
+    "content": "tôi muốn thông tin về \"học sâu cho người mới\""
+  },
+  {
+    "role": "assistant",
+    "content": "Cuốn “Học sâu cho người mới” do Nguyễn Văn A viết, giá 150.000đ, còn 5 quyển trong kho."
+  }
+]

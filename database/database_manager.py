@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from threading import Lock
 from database.models import Book, Order
-
+import datetime
 class Database_Manager:
     def __init__(self, data_dir: str = "data"):
         self.data_dir = Path(__file__).resolve().parents[1] / data_dir
@@ -38,15 +38,22 @@ class Database_Manager:
             self.save_books(books)
 
     def load_orders(self) -> list[Order]:
-        with self._lock:
+        try:
             with open(self.orders_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                return [Order(**o) for o in data]
+        except json.JSONDecodeError:
+                data = []
+        return [Order(**o) for o in data]
 
     def add_order(self, order: Order) -> int:
         with self._lock:
-            orders = self.load_orders()
+            try:
+                orders = self.load_orders()
+            except :
+                print("File orders.json không tồn tại, tạo mới.")
+                orders = []
             order.order_id = max([o.order_id for o in orders] + [0]) + 1
+            print (order.order_id)
             orders.append(order)
             data = [o.to_dict() for o in orders]
             with open(self.orders_file, "w", encoding="utf-8") as f:
@@ -56,9 +63,16 @@ class Database_Manager:
 
 if __name__ == "__main__":
     db = Database_Manager()
-    books = db.load_books()
-    for b in books:
-        print(b)
-    orders = db.load_orders()
-    for o in orders:
-        print(o)
+
+    order = Order(
+        customer_name="Nguyễn Văn A",
+        phone="0123456789",
+        address="123 Đường ABC",
+        books=[
+            {"book_id": 1, "quantity": 2}
+        ],
+        status="pending",
+        created_at=str(datetime.date.today())
+    )
+
+    db.add_order(order)

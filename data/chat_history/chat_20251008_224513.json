@@ -1,0 +1,10 @@
+[
+  {
+    "role": "user",
+    "content": "Tôi muốn thông tin về sách \"Học sâu\""
+  },
+  {
+    "role": "assistant",
+    "content": "Cuốn \"Học sâu cho người mới\" của tác giả Trần B, giá 200.000đ, còn 3 quyển trong kho thuộc danh mục AI\n</think>"
+  }
+]

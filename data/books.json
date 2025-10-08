@@ -1,5 +1,26 @@
 [
-  {"book_id": 1, "title": "Bí kíp Lập trình Python", "author": "Nguyễn A", "price": 150000, "stock": 10, "category": "Programming"},
-  {"book_id": 2, "title": "Học sâu cho người mới", "author": "Trần B", "price": 200000, "stock": 5, "category": "AI"},
-  {"book_id": 3, "title": "Toán cao cấp", "author": "Lê C", "price": 120000, "stock": 0, "category": "Mathematics"}
+  {
+    "book_id": 1,
+    "title": "Lập trình ",
+    "author": "Nguyễn A",
+    "price": 150000,
+    "stock": 7,
+    "category": "Programming"
+  },
+  {
+    "book_id": 2,
+    "title": "Học sâu cho người mới",
+    "author": "Trần B",
+    "price": 200000,
+    "stock": 3,
+    "category": "AI"
+  },
+  {
+    "book_id": 3,
+    "title": "Toán cao cấp",
+    "author": "Lê C",
+    "price": 120000,
+    "stock": 7,
+    "category": "Mathematics"
+  }
 ]

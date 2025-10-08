@@ -46,21 +46,13 @@ class ChatEngine:
 if __name__ == "__main__":
     from model_factory import ModelFactory
     from tool import SearchBookTool, OrderBookTool
-    
-    model = ModelFactory.create("model1", {
-        "Local_model": [
-            {
-                "model_id": "model1",
-                "endpoint": "http://127.0.0.1:11434/api/generate",
-                "model_name": "qwen3:1.7b",
-                "max_tokens": 2048
-            }
-        ]
-    })
+    from database.database_manager import Database_Manager
+    db = Database_Manager()
+    model = ModelFactory.create("model1")
     from react_agents import ReActAgent
     agents = ReActAgent(model=model, tools={
-        "SearchBookTool": SearchBookTool(None),
-        "OrderBookTool": OrderBookTool(None)
+        "SearchBookTool": SearchBookTool(db),
+        "OrderBookTool": OrderBookTool(db)
     })
     ChatEngine = ChatEngine(agents)
     while True:
