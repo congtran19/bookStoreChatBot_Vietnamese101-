@@ -23,7 +23,7 @@ class ReActAgent:
             if json_match:
                 return json.loads(json_match.group(0))
         except json.JSONDecodeError as e:
-            print(f"[⚠️ JSON decode error]: {e}")
+            print(f"[JSON decode error]: {e}")
         return {}
 
     def _parse_response(self, text: str) -> Dict[str, any]:
@@ -58,12 +58,16 @@ class ReActAgent:
                 try:
                     result = self.tools[tool_name].run(tool_input)
                     if result:
-                        parsed["TRẢ LỜI"] = str(result)
-                    observation = json.dumps(result, ensure_ascii=False)
+                        parsed["QUAN SÁT"] = result
+                        observation = json.dumps(result, ensure_ascii=False)
+                        response = self.model.generate_reply(prompt + f"\nOBSERVATION: {observation}", [])
+                        parsed = self._parse_response(response)
+                        result2 = parsed.get("TRẢ LỜI", "Không có câu trả lời cuối")
+                        return result2
                 except Exception as e:
                     observation = f"Lỗi khi gọi tool {tool_name}: {e}"
             else:
-                observation = f"⚠️ Công cụ {tool_name} không được hỗ trợ."
+                observation = f"Công cụ {tool_name} không được hỗ trợ."
 
 
         return parsed.get("TRẢ LỜI", "Không có câu trả lời cuối")

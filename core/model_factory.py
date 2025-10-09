@@ -14,7 +14,7 @@ class LocalHTTPModel(ModelInterface):
     def __init__(self, cfg):
         self.endpoint = cfg.get("endpoint")
         self.headers = cfg.get("headers", {})
-        self.max_tokens = cfg.get("max_tokens", 2048)
+        self.max_tokens = cfg.get("max_tokens", 4096)
         self.model_name = cfg.get("model_name", "local-model")
 
     def generate_reply(self, prompt: str, context: List[str]) -> str:

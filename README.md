@@ -1,5 +1,9 @@
 # bookStoreChatBot_Vietnamese101-
 Chatbot hỗ trợ bán sách đơn giản 
+Em chọn mô hình qwen3 1.7b, đủ nhẹ để chạy trên máy tính cá nhân dù cho không có card đồ họa, sau nay nếu muốn thay đổi mô hình có thể thay trong file config
+
+DEMO SẢN PHẨM(CLI, xem tốc độ 3x sẽ tiết kiệm thời gian của mọi người ạ)
+    Link_video: https://youtu.be/gtNtpYMTW6I?si=JLTIM9gsrkf6V26f
 
 Chatbot này dựa trên mô hình mô hình ReAct (Reasoning + Acting) — tức là mỗi phản hồi đều có quá trình suy luận, gọi công cụ thật, và chỉ trả lời khi có dữ liệu thực tế.
 
@@ -43,3 +47,10 @@ Mục tiêu của em là tạo ra một chatbot có khả năng tư duy nhiều 
 
     Em thực hiện dự án này như một bước luyện tập nghiêm túc về tư duy hệ thống và ứng dụng LLM.
     Nếu anh/chị tuyển dụng hoặc người xem repo có góp ý, em rất sẵn lòng được học hỏi và hoàn thiện hơn ạ. 🙏
+
+
+HƯỚNG DẪN SỬ DỤNG: 
+ B1: TẢI MÔ HÌNH QWEN1.7B TỪ OLLAMA
+ B2: CÀI ĐẶT CÁC THƯ VIỆN CẦN THIẾT TRONG requirements.txt
+ B3: NẾU MUỐN GIAO DIỆN DÒNG LỆNH (CLI) -> CHẠY FILE CHAT_ENGINE.PY
+ B4: NẾU MUỐN GỌI API -> HƯỚNG DẪN SỬ DỤNG: B1: TẢI MÔ HÌNH QWEN1.7B TỪ OLLAMA B2: CÀI ĐẶT CÁC THƯ VIỆN CẦN THIẾT TRONG requirements.txt B3: NẾU MUỐN GIAO DIỆN DÒNG LỆNH (CLI) -> python main.py

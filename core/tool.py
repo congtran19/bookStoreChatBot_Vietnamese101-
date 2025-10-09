@@ -10,7 +10,7 @@ from datetime import datetime
 from database.models import Order
 
 # ===============================
-# 1️⃣ Interface chung cho Tool
+# Interface chung cho Tool
 # ===============================
 class Tool(ABC):
     @abstractmethod
@@ -20,7 +20,7 @@ class Tool(ABC):
 
 data_path = Path
 # ===============================
-# 2️⃣ Tool Tìm kiếm sách
+# Tool Tìm kiếm sách
 # ===============================
 
 class SearchBookTool:
@@ -31,11 +31,8 @@ class SearchBookTool:
         title = query.get("title", "").lower()
         books = self.db.load_books()
         results = [b.to_dict() for b in books if title in b.title.lower()]
-        results = "Cuốn sách bạn tìm có thông tin như sau:\n " + "\n".join(
-            [f"Id: {b['book_id']},Tên sách '{b['title']}' của {b['author']}, Giá: {b['price']} VND, Tồn kho: {b['stock']}, Thể loại: {b['category']}" for b in results]
-        )
         if not results:
-            return {"result": "❌ Không tìm thấy sách nào phù hợp."}
+            return {"result": "Không tìm thấy sách nào phù hợp."}
         return results
 
 
@@ -75,7 +72,7 @@ class OrderBookTool:
             if not isinstance(books, list) or not books:
                 return {"error": "Danh sách sách không hợp lệ"}
 
-            # ✅ Chuyển từ dict → Order object
+            # Chuyển từ dict → Order object
             order = Order(
                 customer_name=customer_name,
                 phone=phone,
@@ -85,12 +82,12 @@ class OrderBookTool:
                 created_at=datetime.utcnow().isoformat()
             )
 
-            # ✅ Ghi đơn hàng vào file
+            # Ghi đơn hàng vào file
             order_id = self.db.add_order(order)
 
             return {
                 "success": True,
-                "message": f"✅ Đơn hàng #{order_id} đã được tạo thành công.",
+                "message": f" Đơn hàng #{order_id} đã được tạo thành công.",
                 "order_id": order_id,
                 "customer": customer_name,
                 "books": books

@@ -1,0 +1,26 @@
+[
+  {
+    "role": "user",
+    "content": "tôi muốn thông tin cuốn Lập trình"
+  },
+  {
+    "role": "assistant",
+    "content": "Cuốn “Lập trình” do Nguyễn A viết, giá 150.000đ, còn 7 quyển trong kho."
+  },
+  {
+    "role": "user",
+    "content": "Tôi muốn mua 2 cuốn Lập trình"
+  },
+  {
+    "role": "assistant",
+    "content": "Vui lòng cung cấp tên, số điện thoại và địa chỉ của bạn để tôi tạo đơn hàng nhé!"
+  },
+  {
+    "role": "user",
+    "content": "Tôi tên Công Trần , địa chỉ: 123 Hà nội, số điện thoại : 0523525"
+  },
+  {
+    "role": "assistant",
+    "content": "Đơn hàng đã được tạo thành công! Mã đơn: 8, khách Công Trần mua 2 cuốn “Lập trình ”. Trạng thái: pending. Ngày tạo: 2025-10-10."
+  }
+]
