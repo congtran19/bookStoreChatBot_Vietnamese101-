@@ -1,0 +1,17 @@
+[{
+    "role": "user",
+    "content": "xin chào, tôi muốn mua 2 cuốn \"toán cao cấp\""
+  },
+  {
+    "role": "assistant",
+    "content": "Vui lòng cung cấp tên, số điện thoại và địa chỉ của bạn để tôi tạo đơn hàng nhé!"
+  },
+  {
+    "role": "user",
+    "content": "tên tôi là Tuấn, Số điện thoại là 15145154, địa chỉ là 45 hà Nội"
+  },
+  {
+    "role": "assistant",
+    "content": "Đơn hàng đã được tạo thành công! Mã đơn: 8. Khách Tuấn mua 2 cuốn “Toán cao cấp”. Trạng thái: pending. Ngày tạo: 2025-10-10."
+  }
+]

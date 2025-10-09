@@ -12,7 +12,7 @@ class ChatEngine:
         """Nhận tin nhắn từ user và phản hồi qua agent"""
         self.history.append({"role": "user", "content": user_input})
 
-        response = self.agent.run(str(self.history[-5:]))
+        response = self.agent.run(str(self.history[-10:]))
 
         self.history.append({"role": "assistant", "content": response})
         self._save_history()

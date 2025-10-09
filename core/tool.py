@@ -31,7 +31,9 @@ class SearchBookTool:
         title = query.get("title", "").lower()
         books = self.db.load_books()
         results = [b.to_dict() for b in books if title in b.title.lower()]
-
+        results = "Cuốn sách bạn tìm có thông tin như sau:\n " + "\n".join(
+            [f"Id: {b['book_id']},Tên sách '{b['title']}' của {b['author']}, Giá: {b['price']} VND, Tồn kho: {b['stock']}, Thể loại: {b['category']}" for b in results]
+        )
         if not results:
             return {"result": "❌ Không tìm thấy sách nào phù hợp."}
         return results

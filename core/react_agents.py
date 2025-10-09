@@ -45,39 +45,28 @@ class ReActAgent:
         }
 
     def run(self, prompt: str) -> str:
-        """Thực hiện nhiều vòng ReAct"""
-        context = []  # lưu toàn bộ lịch sử reasoning
-        query = prompt
+        
+        response = self.model.generate_reply(prompt,[])
+        parsed = self._parse_response(response)
 
-        for step in range(self.max_steps):
-            # Gọi model sinh reasoning
-            response = self.model.generate_reply(prompt=query, context=context)
-            parsed = self._parse_response(response)
-            context.append(response)
+        action = parsed["HÀNH ĐỘNG"]
+        if action:
+            tool_name = action.get("tool")
+            tool_input = action.get("input", {})
 
-            action = parsed["HÀNH ĐỘNG"]
-            if action:
-                tool_name = action.get("tool")
-                tool_input = action.get("input", {})
-
-                if tool_name in self.tools:
-                    try:
-                        result = self.tools[tool_name].run(tool_input)
-                        observation = json.dumps(result, ensure_ascii=False)
-                    except Exception as e:
-                        observation = f"Lỗi khi gọi tool {tool_name}: {e}"
-                else:
-                    observation = f"⚠️ Công cụ {tool_name} không được hỗ trợ."
-
-                # Cập nhật prompt cho bước tiếp theo
-                query = f"{response}\nOBSERVATION: {observation}"
+            if tool_name in self.tools:
+                try:
+                    result = self.tools[tool_name].run(tool_input)
+                    if result:
+                        parsed["TRẢ LỜI"] = str(result)
+                    observation = json.dumps(result, ensure_ascii=False)
+                except Exception as e:
+                    observation = f"Lỗi khi gọi tool {tool_name}: {e}"
             else:
-                break
+                observation = f"⚠️ Công cụ {tool_name} không được hỗ trợ."
 
-            if parsed["TRẢ LỜI"]:
-                return parsed["TRẢ LỜI"]
 
-        return parsed.get("TRẢ LỜI", "Không có câu trả lời cuối.")
+        return parsed.get("TRẢ LỜI", "Không có câu trả lời cuối")
 
 if __name__ == "__main__":
     from model_factory import ModelFactory
@@ -90,4 +79,4 @@ if __name__ == "__main__":
     }
     model = ModelFactory.create("model1")
     ReActAgent = ReActAgent(model=model, tools=tools)
-    print(ReActAgent.run("Cho tôi mua 3 quyển sách Toán cao cấp."))
+    print(ReActAgent.run("Cho tôi thông tin về cuốn Toán cao cấp"))
